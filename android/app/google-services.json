@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1060652544070",
+    "project_id": "expense-tracker-745fb",
+    "storage_bucket": "expense-tracker-745fb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1060652544070:android:48e9732a35317ebf9fda47",
+        "android_client_info": {
+          "package_name": "com.example.time_tracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1060652544070-14fpc9i8sfs55ea4vi8ovmtol3f0el6s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZUT5MTalSZIKUrPJynar0jDfl9MUBoxk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1060652544070-14fpc9i8sfs55ea4vi8ovmtol3f0el6s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
