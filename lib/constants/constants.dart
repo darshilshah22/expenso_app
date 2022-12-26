@@ -17,3 +17,13 @@ List<String> categories = [
 ];
 
 List<String> transactionType = ['Expense', 'Income'];
+
+List<String> paymentType = ['Online', 'Cash'];
+
+List<String> expenseType = ['Want', 'Need', 'Investment'];
+
+const String transactions = "transactions";
+
+const String TOTAL_BALANCE = "totalBal";
+const String EXPENSE_BALANCE = "expenseBal";
+const String INCOME_BALANCE = "incomeBal";

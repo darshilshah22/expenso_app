@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:time_tracker/constants/constants.dart';
 import 'package:time_tracker/constants/string_const.dart';
 import 'package:time_tracker/dark_theme_style.dart';
-import 'package:time_tracker/screens/signup.dart';
+import 'package:time_tracker/screens/Authentication/signup.dart';
+import 'package:time_tracker/widgets/appbar_widget.dart';
 import 'package:time_tracker/widgets/button_widget.dart';
 import 'package:time_tracker/widgets/widget_heading.dart';
 import 'package:time_tracker/widgets/widget_textfield.dart';
+
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -15,22 +17,22 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
-  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passController = TextEditingController();
-  late FocusNode _name;
+  late FocusNode _email;
   late FocusNode _pass;
   bool isShowPass = false;
 
   @override
   void initState() {
     super.initState();
-    _name = FocusNode();
+    _email = FocusNode();
     _pass = FocusNode();
   }
 
   @override
   void dispose() {
-    _name.dispose();
+    _email.dispose();
     _pass.dispose();
     super.dispose();
   }
@@ -43,22 +45,23 @@ class _SignInState extends State<SignIn> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Center(child: HeadingWidget(text: strSignin)),
+            Container(
+                margin: const EdgeInsets.only(left: 10),
+                child: AppBarWidget(title: strSignup, isPop: false)),
             const SizedBox(height: 20),
             GestureDetector(
               child: WidgetTextField(
-                controller: nameController,
-                focusNode: _name,
-                hint: strfname,
-                icon: "assets/icons/user.png",
+                controller: emailController,
+                focusNode: _email,
+                hint: strEmail,
                 suffix: const SizedBox(),
                 func: () {
                   setState(() {
-                    _name.requestFocus();
+                    _email.requestFocus();
                   });
                 },
                 submit: (term) {
-                  _name.unfocus();
+                  _email.unfocus();
                   FocusScope.of(context).requestFocus(_pass);
                   setState(() {});
                 },
@@ -68,7 +71,6 @@ class _SignInState extends State<SignIn> {
               controller: passController,
               focusNode: _pass,
               hint: strpassword,
-              icon: "assets/icons/password.png",
               suffix: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Image.asset(
@@ -89,33 +91,33 @@ class _SignInState extends State<SignIn> {
                 setState(() {});
               },
             ),
-            ButtonWidget(strSignin, (){})
+            ButtonWidget(strSignin, () {}),
+            GestureDetector(
+              onTap: () {
+                push(context, const SignUp());
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(top: 30.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "Don't have an account?",
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.normal),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      strSignup,
+                      style: TextStyle(
+                          color: Styles.themeData(false, context).primaryColor,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
-        ),
-      ),
-      bottomNavigationBar: GestureDetector(
-        onTap: () {
-          push(context, const SignUp());
-        },
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 20.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                "Don't have an account?",
-                style: TextStyle(
-                    color: Colors.black, fontWeight: FontWeight.normal),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                strSignup,
-                style: TextStyle(
-                    color: Styles.themeData(false, context).primaryColor,
-                    fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
         ),
       ),
     );

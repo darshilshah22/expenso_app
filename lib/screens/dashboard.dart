@@ -6,6 +6,8 @@ import 'package:time_tracker/prefs/preferences.dart';
 import 'package:time_tracker/screens/add_expense.dart';
 import 'package:time_tracker/widgets/widget_heading.dart';
 
+import '../constants/constants.dart';
+
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key}) : super(key: key);
 
@@ -16,6 +18,9 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   List<TransactionModel> transactions = [];
   Preferences? prefs;
+  int? totalBal;
+  int? incomeBal;
+  int? expenseBal;
 
   @override
   void initState() {
@@ -26,6 +31,9 @@ class _DashboardState extends State<Dashboard> {
 
   getTransactions() async {
     transactions = await prefs!.getList();
+    totalBal = await prefs!.getBal(TOTAL_BALANCE);
+    incomeBal = await prefs!.getBal(INCOME_BALANCE);
+    expenseBal = await prefs!.getBal(EXPENSE_BALANCE);
     setState(() {});
   }
 
@@ -94,7 +102,7 @@ class _DashboardState extends State<Dashboard> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "10,000 ₹",
+                    "$totalBal ₹",
                     style: TextStyle(
                         color: Styles.themeData(false, context).primaryColor,
                         fontSize: 30,
@@ -126,10 +134,9 @@ class _DashboardState extends State<Dashboard> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            "10,000 ₹",
-                            style: TextStyle(
-                                color: Styles.themeData(false, context)
-                                    .primaryColor,
+                            "$incomeBal ₹",
+                            style: const TextStyle(
+                                color: Colors.green,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -158,10 +165,9 @@ class _DashboardState extends State<Dashboard> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            "10,000 ₹",
-                            style: TextStyle(
-                                color: Styles.themeData(false, context)
-                                    .primaryColor,
+                            "$expenseBal ₹",
+                            style: const TextStyle(
+                                color: Colors.red,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -222,7 +228,6 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Widget _buildTransactionHistory() {
-    //getTransactions();
     return ListView.builder(
         shrinkWrap: true,
         itemCount: transactions.length,

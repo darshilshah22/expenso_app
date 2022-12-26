@@ -24,3 +24,6 @@ String strWeek = 'Week';
 String strMonth = 'Month';
 String strYear = 'Year';
 String strProfile = 'Profile';
+String strEmail = 'Email';
+String strExpenseType = 'Expense Type';
+String strPaymentType = 'Payment Type';

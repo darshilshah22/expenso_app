@@ -6,9 +6,17 @@ class TransactionModel {
   int? amount;
   String? category;
   String? date;
+  String? expenseType;
+  String? paymentType;
 
   TransactionModel(
-      {this.name, this.transactionType, this.amount, this.category, this.date});
+      {this.name,
+      this.transactionType,
+      this.amount,
+      this.category,
+      this.date,
+      this.expenseType,
+      this.paymentType});
 
   factory TransactionModel.fromJson(Map<String, dynamic> jsonData) {
     return TransactionModel(
@@ -17,6 +25,8 @@ class TransactionModel {
       amount: jsonData['amount'],
       category: jsonData['category'],
       date: jsonData['date'],
+      expenseType: jsonData['expense_type'],
+      paymentType: jsonData['payment_type'],
     );
   }
 
@@ -26,6 +36,8 @@ class TransactionModel {
         'amount': transaction.amount,
         'category': transaction.category,
         'date': transaction.date,
+        'expense_type': transaction.expenseType,
+        'payment_type': transaction.paymentType,
       };
 
   static String encode(List<TransactionModel> transactions) => json.encode(

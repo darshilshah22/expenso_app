@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -33,6 +34,9 @@ class _AddExpenseState extends State<AddExpense> {
   bool isShowPass = false;
   String type = '';
   String prefix = '';
+  int? totalBal;
+  int? incomeBal;
+  int? expenseBal;
   List<TransactionModel> transactions = [];
   Preferences prefs = Preferences();
 
@@ -42,11 +46,15 @@ class _AddExpenseState extends State<AddExpense> {
     _name = FocusNode();
     _amount = FocusNode();
     _category = FocusNode();
+    Provider.of<AddExpenseProvider>(context, listen: false).setType('');
     getTransaction();
   }
 
   getTransaction() async {
     transactions = await prefs.getList();
+    totalBal = await prefs.getBal(TOTAL_BALANCE);
+    incomeBal = await prefs.getBal(INCOME_BALANCE);
+    expenseBal = await prefs.getBal(EXPENSE_BALANCE);
     setState(() {});
   }
 
@@ -87,21 +95,22 @@ class _AddExpenseState extends State<AddExpense> {
 
   Widget _buildAddExpense() {
     final provider = Provider.of<AddExpenseProvider>(context, listen: false);
-    return Flexible(
-      child: Container(
-        margin: const EdgeInsets.only(left: 20, right: 20, top: 60, bottom: 20),
-        padding: const EdgeInsets.only(left: 20, right: 20),
-        decoration: BoxDecoration(boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              offset: const Offset(0, 4),
-              blurRadius: 16),
-          BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              offset: const Offset(4, 0),
-              blurRadius: 16)
-        ], borderRadius: BorderRadius.circular(18), color: Colors.white),
-        child: SingleChildScrollView(
+    return Expanded(
+      child: SingleChildScrollView(
+        child: Container(
+          margin:
+              const EdgeInsets.only(left: 20, right: 20, top: 50, bottom: 20),
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          decoration: BoxDecoration(boxShadow: [
+            BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                offset: const Offset(0, 4),
+                blurRadius: 16),
+            BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                offset: const Offset(4, 0),
+                blurRadius: 16)
+          ], borderRadius: BorderRadius.circular(18), color: Colors.white),
           child: Column(
             children: [
               const SizedBox(height: 40),
@@ -130,14 +139,80 @@ class _AddExpenseState extends State<AddExpense> {
                   }
                 },
                 setValue: (index) {
-                  provider.setType(transactionType[index!]);
+                  Provider.of<AddExpenseProvider>(context, listen: false)
+                      .setType(transactionType[index!]);
                 },
               ),
+              if (Provider.of<AddExpenseProvider>(context, listen: true).type ==
+                  'Expense')
+                const SizedBox(height: 30),
+              if (Provider.of<AddExpenseProvider>(context, listen: true).type ==
+                  'Expense')
+                CustomDropdown(
+                  type: type,
+                  hint: strExpenseType,
+                  list: expenseType,
+                  func: () {
+                    setState(() {
+                      type = strExpenseType;
+                    });
+                    _name.unfocus();
+                    _amount.unfocus();
+                    if (Provider.of<ExpandDropdownProvider>(context,
+                                listen: false)
+                            .isExpand &&
+                        type == strExpenseType) {
+                      setState(() {
+                        type = '';
+                      });
+                      Provider.of<ExpandDropdownProvider>(context,
+                              listen: false)
+                          .expand = false;
+                    } else {
+                      Provider.of<ExpandDropdownProvider>(context,
+                              listen: false)
+                          .expand = true;
+                    }
+                  },
+                  setValue: (index) {
+                    provider.setExpenseType(expenseType[index!]);
+                  },
+                ),
               //Text(Provider.of<AddExpenseProvider>(context, listen: true).type),
               const SizedBox(height: 30),
               _buildTextField(strName, _name, nameController, false),
               const SizedBox(height: 30),
               _buildTextField(strAmount, _amount, amountController, true),
+              const SizedBox(height: 30),
+              CustomDropdown(
+                type: type,
+                hint: strPaymentType,
+                list: paymentType,
+                func: () {
+                  setState(() {
+                    type = strPaymentType;
+                  });
+                  _name.unfocus();
+                  _amount.unfocus();
+                  if (Provider.of<ExpandDropdownProvider>(context,
+                              listen: false)
+                          .isExpand &&
+                      type == strType) {
+                    setState(() {
+                      type = '';
+                    });
+                    Provider.of<ExpandDropdownProvider>(context, listen: false)
+                        .expand = false;
+                  } else {
+                    Provider.of<ExpandDropdownProvider>(context, listen: false)
+                        .expand = true;
+                  }
+                },
+                setValue: (index) {
+                  Provider.of<AddExpenseProvider>(context, listen: false)
+                      .setPaymentType(paymentType[index!]);
+                },
+              ),
               const SizedBox(height: 30),
               CustomDropdown(
                 type: type,
@@ -191,9 +266,26 @@ class _AddExpenseState extends State<AddExpense> {
                             .category,
                     date:
                         Provider.of<AddExpenseProvider>(context, listen: false)
-                            .date);
+                            .date,
+                    expenseType:
+                        Provider.of<AddExpenseProvider>(context, listen: false)
+                            .expenseType,
+                    paymentType:
+                        Provider.of<AddExpenseProvider>(context, listen: false)
+                            .paymentType);
+
+                if (provider.type == "Expense") {
+                  expenseBal = expenseBal! + int.parse(amountController.text);
+                  totalBal = totalBal! - int.parse(amountController.text);
+                  prefs.setBal(EXPENSE_BALANCE, expenseBal!);
+                } else {
+                  incomeBal = incomeBal! + int.parse(amountController.text);
+                  totalBal = totalBal! + int.parse(amountController.text);
+                  prefs.setBal(INCOME_BALANCE, incomeBal!);
+                }
                 transactions.add(transactionModel);
                 prefs.setList(transactions);
+                prefs.setBal(TOTAL_BALANCE, totalBal!);
 
                 push(context, const BottomNavigation());
               }),
